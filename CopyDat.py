@@ -2,6 +2,17 @@ import xlrd
 import csv
 import numpy as np
 
+# ---求出目标行行号
+def GetRow(ds) :
+    i = 0 ; num = 0
+    while num == 0:
+        if ds.row_values(i)[1] == '':
+            if ds.row_values(i+1)[1] != "":
+                num = 1
+        i = i + 1
+    row = i
+    return row
+
 # ---超孔压
 PorData = xlrd.open_workbook('C:\\Abaqus\\temp\\POR.xls')  # 读入文件
 ds = PorData.sheet_by_index(0)
@@ -10,7 +21,7 @@ for i in range(ds.nrows):
     PorNum[i] = (ds.row_values(i))
     del PorNum[i][0:2]
 PxNum = np.arange(-21.6, 25.2, 1.2).tolist()               # 横坐标
-with open('C:\\Abaqus\\temp\\ContainDat.csv', 'w', newline="") as f:
+with open('C:\\Abaqus\\temp\\ContainDat.csv', 'a', newline="") as f:
     f_csv = csv.writer(f)
     f_csv.writerow(PxNum)                                  # 1 *39
     f_csv.writerows(PorNum)                                # 12*39
@@ -18,9 +29,10 @@ with open('C:\\Abaqus\\temp\\ContainDat.csv', 'w', newline="") as f:
 # ---地表沉降
 U3Data = xlrd.open_workbook('C:\\Abaqus\\temp\\U30.xls')   # 读入文件
 ds = U3Data.sheet_by_index(0)
+rowNum = GetRow(ds)
 U3Num = [[] for _ in range(23)]                            # 生成多个空表
 for i in range(23):
-    U3Num[i] = (ds.row_values(27+i))
+    U3Num[i] = (ds.row_values(rowNum+i))
 with open('C:\\Abaqus\\temp\\ContainDat.csv', 'a', newline="") as f:
     f_csv = csv.writer(f)
     f_csv.writerows(U3Num)                                 # 23*40
@@ -70,23 +82,26 @@ ds1 = SSDz1.sheet_by_index(0)
 ds2 = SSDz2.sheet_by_index(0)
 ds3 = SSDy1.sheet_by_index(0)
 
+rowNum = GetRow(ds1)
 yNum = [[] for _ in range(16)]
 for i in range(16):
-    yNum[i] = ds1.row_values(i+20)
+    yNum[i] = ds1.row_values(i+rowNum)
 with open('C:\\Abaqus\\temp\\ContainDat.csv', 'a', newline="") as f:
     f_csv = csv.writer(f)
     f_csv.writerows(yNum)                                          # 16*40
 
+rowNum = GetRow(ds2)
 yNum = [[] for _ in range(11)]
 for i in range(11):
-    yNum[i] = ds2.row_values(i+21)
+    yNum[i] = ds2.row_values(i+rowNum)
 with open('C:\\Abaqus\\temp\\ContainDat.csv', 'a', newline="") as f:
     f_csv = csv.writer(f)
     f_csv.writerows(yNum)                                          # 11*40
 
+rowNum = GetRow(ds3)
 yNum = [[] for _ in range(17)]
 for i in range(17):
-    yNum[i] = ds3.row_values(i+23)
+    yNum[i] = ds3.row_values(i+rowNum)
 with open('C:\\Abaqus\\temp\\ContainDat.csv', 'a', newline="") as f:
     f_csv = csv.writer(f)
     f_csv.writerows(yNum)                                         # 17*40
