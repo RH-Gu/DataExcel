@@ -104,4 +104,4 @@ for i in range(17):
     yNum[i] = ds3.row_values(i+rowNum)
 with open('C:\\Abaqus\\temp\\ContainDat.csv', 'a', newline="") as f:
     f_csv = csv.writer(f)
-    f_csv.writerows(yNum)                                         # 17*40
+    f_csv.writerows(yNum)                                         # 17*4
